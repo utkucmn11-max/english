@@ -1,34 +1,22 @@
 import streamlit as st
 import random
+import json
+import os
 
 # Sayfa Ayarları
-st.set_page_config(page_title="İngilizce Kelime Öğren", page_icon="📝", layout="centered")
+st.set_page_config(page_title="1000 Kelime Master", page_icon="📖", layout="centered")
 
-# --- 100 TEMEL KELİME HAVUZU ---
+# --- KELİME YÜKLEME ---
+def load_words():
+    # Eğer words.json varsa oradan oku, yoksa örnek liste oluştur
+    if os.path.exists('words.json'):
+        with open('words.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    else:
+        return [{"en": "Example", "tr": "Örnek", "hint": "Dosya bulunamadı uyarısı."}]
+
 if 'words' not in st.session_state:
-    st.session_state.words = [
-        {"en": "Always", "tr": "Her zaman", "hint": "Hiç aksatmadan yapılan şeyler. ⏰"},
-        {"en": "Beautiful", "tr": "Güzel", "hint": "Göze hoş gelen şeyler. ✨"},
-        {"en": "Breakfast", "tr": "Kahvaltı", "hint": "Günün ilk öğünü. 🍳"},
-        {"en": "Cheap", "tr": "Ucuz", "hint": "Fiyatı düşük olan. 🏷️"},
-        {"en": "Difficult", "tr": "Zor", "hint": "Kolay olmayan. 🧩"},
-        {"en": "Enough", "tr": "Yeterli", "hint": "Kafi, yeter. ✅"},
-        {"en": "Friend", "tr": "Arkadaş", "hint": "Sevdiğimiz kişi. 🤝"},
-        {"en": "Healthy", "tr": "Sağlıklı", "hint": "Vücudu iyi durumda olan. 🍎"},
-        {"en": "Journey", "tr": "Yolculuk", "hint": "Bir yerden bir yere gitmek. ✈️"},
-        {"en": "Kitchen", "tr": "Mutfak", "hint": "Yemek yapılan yer. 🔪"},
-        {"en": "Answer", "tr": "Cevap", "hint": "Soruya verilen karşılık. 💬"},
-        {"en": "Believe", "tr": "İnanmak", "hint": "Doğru olduğunu düşünmek. 🙏"},
-        {"en": "Bridge", "tr": "Köprü", "hint": "Yolları bağlayan yapı. 🌉"},
-        {"en": "Choose", "tr": "Seçmek", "hint": "Karar vermek. 👉"},
-        {"en": "Dangerous", "tr": "Tehlikeli", "hint": "Zarar verebilecek durumlar. 🚨"},
-        {"en": "Different", "tr": "Farklı", "hint": "Aynı olmayan. 🌈"},
-        {"en": "Early", "tr": "Erken", "hint": "Vaktinden önce. 🌅"},
-        {"en": "Famous", "tr": "Ünlü", "hint": "Tanınan kişi. 🌟"},
-        {"en": "Garden", "tr": "Bahçe", "hint": "Evin dışındaki yeşil alan. 🏡"},
-        {"en": "Hungry", "tr": "Aç", "hint": "Yemek yeme isteği. 🍔"},
-        # ... (Diğer kelimeler buraya eklenebilir)
-    ]
+    st.session_state.words = load_words()
 
 # --- STATE YÖNETİMİ ---
 if 'current_word' not in st.session_state:
@@ -50,11 +38,11 @@ def next_word():
     st.rerun()
 
 # --- ARAYÜZ ---
-st.title("📝 Kelime Öğrenme Platformu")
-st.write(f"Efendim hoş geldin Utku! Yanlış yaparsan doğrusunu görüp öğrenebilirsin. ✨")
+st.title("📖 1000 Kelime Öğrenme Platformu")
+st.write(f"Hoş geldin Utku! Temel seviyeden uzmanlığa... ✨")
 
-st.metric("Skorun", st.session_state.score)
-mode = st.selectbox("Mod Seçin", ["EN -> TR", "TR -> EN"], key="mode_selection")
+st.metric("Puanın", st.session_state.score)
+mode = st.selectbox("Çalışma Modu", ["EN -> TR", "TR -> EN"])
 
 st.divider()
 
@@ -64,18 +52,19 @@ correct_answer = word['tr'] if mode == "EN -> TR" else word['en']
 
 st.markdown(f"<h1 style='text-align: center; color: #4A90E2;'>{target_question}</h1>", unsafe_allow_html=True)
 
-# İpucu Bölümü
+# İpucu
 if not st.session_state.answered:
     if st.session_state.show_hint:
-        st.info(f"💡 **İpucu:** {word['hint']}")
+        st.info(f"💡 İpucu: {word['hint']}")
     else:
-        if st.button("İpucu Ver 💡"):
+        if st.button("İpucu Al"):
             st.session_state.show_hint = True
             st.rerun()
 
 # Cevap Formu
 with st.form(key='quiz_form', clear_on_submit=True):
-    user_ans = st.text_input("Cevabın:", disabled=st.session_state.answered).strip().lower()
+    # Yanlış veya Doğru fark etmeksizin cevap verildiyse kutu kilitlenir
+    user_ans = st.text_input("Tahminin:", disabled=st.session_state.answered).strip().lower()
     submit_button = st.form_submit_button(label='Kontrol Et', disabled=st.session_state.answered)
 
 if submit_button:
@@ -88,18 +77,15 @@ if submit_button:
         st.session_state.is_correct = False
     st.rerun()
 
-# --- CEVAP GÖSTERİM ALANI ---
+# Cevap Sonucu ve Bekleme Ekranı
 if st.session_state.answered:
     if st.session_state.is_correct:
-        st.success(f"TEBRİKLER! 🎉 Doğru cevap: **{correct_answer}**")
+        st.success(f"HARİKASIN! 🎉 Cevap: {correct_answer}")
         st.balloons()
     else:
-        # Yanlış cevap durumunda doğrusunu göster
-        st.error(f"YANLIŞ! ❌ Doğru cevap: **{correct_answer.upper()}**")
-        st.info("Doğru cevabı incele ve hazır olduğunda diğer kelimeye geç. 💪")
+        # Doğru cevabı burada gösteriyoruz
+        st.error(f"YANLIŞ! ❌ Doğru Cevap: {correct_answer.upper()}")
+        st.warning("Yukarıdaki kutu kilitlendi. Doğruyu incele ve devam et.")
     
-    if st.button("Sıradaki Kelimeye Geç ➡️"):
+    if st.button("Sıradaki Kelime ➡️"):
         next_word()
-
-st.divider()
-st.caption("Not: Yanlış yaptığında kutucuk kilitlenir, böylece sadece doğru cevaba odaklanabilirsin. 🚀")
