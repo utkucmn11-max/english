@@ -1,176 +1,102 @@
-import streamlit as st
-import random
-
-# Sayfa Ayarları
-st.set_page_config(page_title="C2 English Master", page_icon="🎓", layout="centered")
-
-# --- KELİME HAVUZU ---
+# --- GÜNLÜK HAYAT ODAKLI 100 C2 KELİMESİ ---
 if 'words' not in st.session_state:
     st.session_state.words = [
-        {"en": "Always", "tr": "Her zaman", "hint": "Hiç aksatmadan yapılan şeyler için kullanılır. ⏰"},
-        {"en": "Beautiful", "tr": "Güzel", "hint": "Göze hoş gelen şeyler için söylenir. ✨"},
-        {"en": "Between", "tr": "Arasında", "hint": "İki şeyin ortasında olma durumu. ↕️"},
-        {"en": "Breakfast", "tr": "Kahvaltı", "hint": "Günün ilk öğünü. 🍳"},
-        {"en": "Busy", "tr": "Meşgul", "hint": "Yapacak çok işi olan kişi. 📞"},
-        {"en": "Careful", "tr": "Dikkatli", "hint": "Hata yapmamaya çalışan, tedbirli. ⚠️"},
-        {"en": "Cheap", "tr": "Ucuz", "hint": "Fiyatı düşük olan, pahalı olmayan. 🏷️"},
-        {"en": "Clean", "tr": "Temiz", "hint": "Kirli olmayan, pak. 🧼"},
-        {"en": "Country", "tr": "Ülke", "hint": "Türkiye, İngiltere gibi toprak parçaları. 🌍"},
-        {"en": "Dangerous", "tr": "Tehlikeli", "hint": "Zarar verebilecek durumlar. 🚨"},
-        {"en": "Daughter", "tr": "Kız evlat", "hint": "Bir ailenin kız çocuğu. 👧"},
-        {"en": "Different", "tr": "Farklı", "hint": "Aynı olmayan, başka. 🌈"},
-        {"en": "Difficult", "tr": "Zor", "hint": "Yapması kolay olmayan. 🧩"},
-        {"en": "Early", "tr": "Erken", "hint": "Vaktinden önce veya sabahın ilk saatleri. 🌅"},
-        {"en": "Enough", "tr": "Yeterli", "hint": "Kafi, daha fazlasına gerek yok. ✅"},
-        {"en": "Expensive", "tr": "Pahalı", "hint": "Fiyatı yüksek olan. 💰"},
-        {"en": "Famous", "tr": "Ünlü", "hint": "Herkes tarafından tanınan. 🌟"},
-        {"en": "Fast", "tr": "Hızlı", "hint": "Yavaş olmayan, süratli. ⚡"},
-        {"en": "Floor", "tr": "Yer / Kat", "hint": "Bastığımız zemin veya binanın katı. 🏢"},
-        {"en": "Friend", "tr": "Arkadaş", "hint": "Sevdiğimiz ve güvendiğimiz kişi. 🤝"},
-        {"en": "Garden", "tr": "Bahçe", "hint": "Evin dışındaki yeşil alan. 🏡"},
-        {"en": "Healthy", "tr": "Sağlıklı", "hint": "Vücudu iyi durumda olan. 🍎"},
-        {"en": "Helpful", "tr": "Yardımsever", "hint": "Başkalarına yardım etmeyi seven. 👋"},
-        {"en": "Hungry", "tr": "Aç", "hint": "Yemek yeme isteği olan. 🍔"},
-        {"en": "Important", "tr": "Önemli", "hint": "Değeri yüksek, önceliği olan. 🔑"},
-        {"en": "Island", "tr": "Ada", "hint": "Etrafı suyla çevrili kara parçası. 🏝️"},
-        {"en": "Journey", "tr": "Yolculuk", "hint": "Bir yerden bir yere gitme süreci. ✈️"},
-        {"en": "Kitchen", "tr": "Mutfak", "hint": "Yemek yapılan yer. 🔪"},
-        {"en": "Laugh", "tr": "Gülmek", "hint": "Komik bir şeye verilen tepki. 😂"},
-        {"en": "Learn", "tr": "Öğrenmek", "hint": "Yeni bir bilgi edinmek. 📚"},
-        {"en": "Leave", "tr": "Ayrılmak", "hint": "Bir yerden çıkıp gitmek. 🚪"},
-        {"en": "Listen", "tr": "Dinlemek", "hint": "Kulağını vererek duymaya çalışmak. 🎧"},
-        {"en": "Lucky", "tr": "Şanslı", "hint": "İşi rast giden kişi. 🍀"},
-        {"en": "Market", "tr": "Pazar / Market", "hint": "Alışveriş yapılan yer. 🛒"},
-        {"en": "Mistake", "tr": "Hata", "hint": "Yanlış yapılan şey. ❌"},
-        {"en": "Mountain", "tr": "Dağ", "hint": "Çok yüksek yer şekli. 🏔️"},
-        {"en": "Neighbor", "tr": "Komşu", "hint": "Yan evde oturan kişi. 🏠"},
-        {"en": "Never", "tr": "Asla", "hint": "Hiçbir zaman. 🚫"},
-        {"en": "Often", "tr": "Sık sık", "hint": "Çok kez yapılan. 🔄"},
-        {"en": "Outside", "tr": "Dışarıda", "hint": "İçerinin zıttı. 🌳"},
-        {"en": "Parent", "tr": "Ebeveyn", "hint": "Anne veya baba. 👨‍👩‍👧"},
-        {"en": "People", "tr": "İnsanlar", "hint": "Kişilerin çoğul hali. 👥"},
-        {"en": "Place", "tr": "Yer", "hint": "Mekan, konum. 📍"},
-        {"en": "Pocket", "tr": "Cep", "hint": "Kıyafette eşya konulan yer. 👖"},
-        {"en": "Quiet", "tr": "Sessiz", "hint": "Gürültüsüz ortam. 🤫"},
-        {"en": "Ready", "tr": "Hazır", "hint": "Tamamlanmış, bekleyen. 🏁"},
-        {"en": "Remember", "tr": "Hatırlamak", "hint": "Unutmamak, akla getirmek. 🧠"},
-        {"en": "Rich", "tr": "Zengin", "hint": "Çok parası olan. 💎"},
-        {"en": "River", "tr": "Nehir", "hint": "Akan su kütlesi. 🌊"},
-        {"en": "Share", "tr": "Paylaşmak", "hint": "Bölüşmek. 🍕"},
-        {"en": "Simple", "tr": "Basit", "hint": "Karmaşık olmayan, kolay. 💡"},
-        {"en": "Sleepy", "tr": "Uykulu", "hint": "Uyumak isteyen kişi. 🥱"},
-        {"en": "Smile", "tr": "Gülümsemek", "hint": "Mutluluk ifadesi. 😊"},
-        {"en": "Sometimes", "tr": "Bazen", "hint": "Ara sıra. ⏳"},
-        {"en": "Street", "tr": "Sokak", "hint": "Evlerin önündeki yol. 🛣️"},
-        {"en": "Strong", "tr": "Güçlü", "hint": "Kuvvetli. 💪"},
-        {"en": "Thirsty", "tr": "Susamış", "hint": "Su içmek isteyen. 💧"},
-        {"en": "Ticket", "tr": "Bilet", "hint": "Otobüs veya sinema için gerekli kağıt. 🎟️"},
-        {"en": "Together", "tr": "Birlikte", "hint": "Beraberce. 👨‍👩‍👦"},
-        {"en": "Travel", "tr": "Seyahat etmek", "hint": "Gezmek, yeni yerler görmek. 🌍"},
-        {"en": "Understand", "tr": "Anlamak", "hint": "Bir şeyi kavramak. ✅"},
-        {"en": "Until", "tr": "Kadar", "hint": "Belli bir zamana dek. 🕒"},
-        {"en": "Vacation", "tr": "Tatil", "hint": "Dinlenmek için gidilen zaman. 🏖️"},
-        {"en": "Village", "tr": "Köy", "hint": "Şehirden küçük yerleşim yeri. 🏡"},
-        {"en": "Visit", "tr": "Ziyaret etmek", "hint": "Birine veya bir yere gitmek. 👋"},
-        {"en": "Wait", "tr": "Beklemek", "hint": "Zamanın geçmesini beklemek. ⏳"},
-        {"en": "Weather", "tr": "Hava durumu", "hint": "Güneşli, yağmurlu gibi durumlar. ☀️"},
-        {"en": "Weekly", "tr": "Haftalık", "hint": "Haftada bir olan. 🗓️"},
-        {"en": "Window", "tr": "Pencere", "hint": "Evin dışarıya açılan camı. 🪟"},
-        {"en": "Winter", "tr": "Kış", "hint": "En soğuk mevsim. ❄️"},
-        {"en": "Worker", "tr": "İşçi", "hint": "Çalışan kişi. 👷"},
-        {"en": "World", "tr": "Dünya", "hint": "Üzerinde yaşadığımız gezegen. 🌏"},
-        {"en": "Write", "tr": "Yazmak", "hint": "Kağıda not düşmek. ✍️"},
-        {"en": "Young", "tr": "Genç", "hint": "Yaşlı olmayan. 👶"},
-        {"en": "Answer", "tr": "Cevap", "hint": "Soruya verilen karşılık. 💬"},
-        {"en": "Believe", "tr": "İnanmak", "hint": "Bir şeyin doğru olduğunu düşünmek. 🙏"},
-        {"en": "Bottle", "tr": "Şişe", "hint": "Su koyduğumuz kap. 🧴"},
-        {"en": "Bridge", "tr": "Köprü", "hint": "Yolları birbirine bağlayan yapı. 🌉"},
-        {"en": "Change", "tr": "Değiştirmek", "hint": "Farklı hale getirmek. 🔄"},
-        {"en": "Choose", "tr": "Seçmek", "hint": "Karar vermek. 👉"},
-        {"en": "Cloud", "tr": "Bulut", "hint": "Gökyüzündeki beyaz kümeler. ☁️"},
-        {"en": "Company", "tr": "Şirket", "hint": "İş yeri. 🏢"},
-        {"en": "Create", "tr": "Oluşturmak", "hint": "Yaratmak, yapmak. ✨"},
-        {"en": "Dinner", "tr": "Akşam yemeği", "hint": "Günün son büyük öğünü. 🍽️"},
-        {"en": "Dream", "tr": "Rüya", "hint": "Uyurken görülen şeyler. 😴"},
-        {"en": "Everywhere", "tr": "Her yer", "hint": "Tüm mekanlar. 🗺️"},
-        {"en": "Experience", "tr": "Deneyim", "hint": "Tecrübe. 🎓"},
-        {"en": "Feeling", "tr": "Duygu", "hint": "His. ❤️"},
-        {"en": "Follow", "tr": "Takip etmek", "hint": "Arkadan gelmek veya izlemek. 👣"},
-        {"en": "Future", "tr": "Gelecek", "hint": "Daha yaşanmamış zaman. 🚀"},
-        {"en": "History", "tr": "Tarih", "hint": "Geçmişte olan olaylar. 📜"},
-        {"en": "Imagine", "tr": "Hayal etmek", "hint": "Zihinde canlandırmak. 🌈"},
-        {"en": "Knowledge", "tr": "Bilgi", "hint": "Öğrenilen şeylerin bütünü. 💡"},
-        {"en": "Memory", "tr": "Hafıza", "hint": "Anı, hatırlanan şey. 🖼️"},
-        {"en": "Nature", "tr": "Doğa", "hint": "Yeşillik, hayvanlar ve çevre. 🌿"},
-        {"en": "Possible", "tr": "Mümkün", "hint": "Olabilir, ihtimal dahilinde. ✅"},
-        {"en": "Reason", "tr": "Sebep", "hint": "Neden. ❓"},
-        {"en": "Success", "tr": "Başarı", "hint": "Hedefe ulaşma durumu. 🏆"},
-        {"en": "Thought", "tr": "Düşünce", "hint": "Fikir. 💭"},
-        {"en": "Victory", "tr": "Zafer", "hint": "Kazanma, başarı. ✌️"}
-    
-    
+        {"en": "Gutted", "tr": "Çok üzgün", "hint": "Hayal kırıklığına uğramış, yıkılmış hissetmek. 💔"},
+        {"en": "Flabbergasted", "tr": "Şaşkına dönmüş", "hint": "Ağzı açık kalacak kadar şaşırmak. 😲"},
+        {"en": "Dodgy", "tr": "Teke tek / Şüpheli", "hint": "Güven vermeyen, bozuk veya riskli görünen durumlar. 🤨"},
+        {"en": "Gobsmacked", "tr": "Şoke olmuş", "hint": "Beklenmedik bir durum karşısında nutku tutulmak. 😶"},
+        {"en": "Knackered", "tr": "Çok yorgun", "hint": "Pili bitmiş, aşırı bitkin hissetmek. 😴"},
+        {"en": "Nifty", "tr": "Pratik", "hint": "Zekice tasarlanmış, işe yarar ve şık çözümler. 🛠️"},
+        {"en": "Posh", "tr": "Lüks / Sosyetik", "hint": "Zengin, havalı ve üst sınıf görünen her şey. ✨"},
+        {"en": "Rusty", "tr": "Paslanmış", "hint": "Bir beceriyi (örn: İngilizce) uzun süre kullanmadığın için gerilemek. ⚙️"},
+        {"en": "Skint", "tr": "Parasız", "hint": "Meteliğe kurşun atmak, o an nakitinin olmaması. 💸"},
+        {"en": "Smug", "tr": "Kendini beğenmiş", "hint": "Kendi başarısıyla başkalarını rahatsız edecek kadar gurur duymak. 😏"},
+        {"en": "Tacky", "tr": "Zevksiz", "hint": "Ucuz görünen, rüküş veya kalitesiz. 👗"},
+        {"en": "Vibe", "tr": "Ortamın enerjisi", "hint": "Bir yerin veya kişinin yaydığı his. ✨"},
+        {"en": "Whinge", "tr": "Mızmızlanmak", "hint": "Sürekli ve gereksiz yere şikayet etmek. 😫"},
+        {"en": "Zonked", "tr": "Sızmış", "hint": "Yorgunluktan veya ilaçtan dolayı anında uyuyakalmak. 💤"},
+        {"en": "Bummer", "tr": "Hayal kırıklığı", "hint": "Üzücü veya sinir bozucu bir olay/durum. 📉"},
+        {"en": "Clunky", "tr": "Hantal", "hint": "Ağır çalışan, kaba ve estetikten uzak (teknoloji için kullanılır). 🖥️"},
+        {"en": "Dorky", "tr": "Saf / Tuhaf", "hint": "Biraz komik, saf ama sevimli bir gariplik. 🤓"},
+        {"en": "Iffy", "tr": "Şüpheli", "hint": "Olup olmayacağı belli olmayan, güven vermeyen. ❓"},
+        {"en": "Miffed", "tr": "Alınmış / Gücenmiş", "hint": "Hafifçe sinirlenmiş veya bozulmuş hissetmek. 😤"},
+        {"en": "Quirky", "tr": "Sıra dışı", "hint": "Kendine has, ilginç ve alışılmadık özellikleri olan. 🌀"},
+        {"en": "Savvy", "tr": "Anlayışlı / Bilgili", "hint": "Bir konuda (teknoloji, iş vb.) çok pratik bilgi sahibi olmak. 💡"},
+        {"en": "Tad", "tr": "Birazcık", "hint": "Çok küçük miktar. 'A tad expensive' gibi. 🤏"},
+        {"en": "Upbeat", "tr": "Neşeli", "hint": "Pozitif, enerjik ve umut dolu. 😊"},
+        {"en": "Vague", "tr": "Hayal meyal / Belirsiz", "hint": "Net olmayan, üstü kapalı anlatım. 🌫️"},
+        {"en": "Wicked", "tr": "Müthiş", "hint": "Günlük dilde 'harika' anlamında kullanılır. 🤘"},
+        {"en": "Yank", "tr": "Aniden çekmek", "hint": "Bir şeyi hızla ve sertçe kendine çekmek. 🎢"},
+        {"en": "Zesty", "tr": "Heyecan verici", "hint": "Enerjik, canlı ve ilgi çekici. 🍋"},
+        {"en": "Baffled", "tr": "Aklı karışmış", "hint": "Bir şeyi hiç anlayamamak, çözememek. 😵‍💫"},
+        {"en": "Chuffed", "tr": "Çok memnun", "hint": "Bir başarıdan dolayı gururlu ve mutlu hissetmek. 😊"},
+        {"en": "Dwell", "tr": "Üzerinde durmak", "hint": "Bir konuyu kafaya takıp sürekli düşünmek. 🤔"},
+        {"en": "Eager", "tr": "Hevesli", "hint": "Bir şeyi yapmayı çok isteyen. 🔥"},
+        {"en": "Fuss", "tr": "Yaygara", "hint": "Küçük bir şey için koparılan fırtına. 🌪️"},
+        {"en": "Grumpy", "tr": "Huysuz", "hint": "Tersinden kalkmış, her şeye sinirlenen. 😠"},
+        {"en": "Hectic", "tr": "Telaşlı", "hint": "Çok yoğun, koşturmacalı ve karışık (Örn: İş günü). 🏃‍♂️"},
+        {"en": "Intrigued", "tr": "Merakı uyanmış", "hint": "Bir şeyin ilgisini çekmesi ve merak etmesi. 🕵️‍♂️"},
+        {"en": "Jaded", "tr": "Bıkkın", "hint": "Bir şeyi çok fazla yapmaktan dolayı artık heyecan duymamak. 😑"},
+        {"en": "Kudos", "tr": "Tebrikler", "hint": "Başarıdan dolayı verilen övgü ve saygı. 👏"},
+        {"en": "Loathe", "tr": "Nefret etmek", "hint": "Bir şeyden tiksinmek, hiç sevmemek. 🤮"},
+        {"en": "Mundane", "tr": "Sıradan", "hint": "Günlük, sıkıcı ve rutin işler. 📅"},
+        {"en": "Nifty", "tr": "Havalı / Şık", "hint": "Hem kullanışlı hem de göze hoş gelen. ✨"},
+        {"en": "Outrageous", "tr": "Pes dedirten", "hint": "Şoke edici, kabul edilemez veya çok aşırı. 🤯"},
+        {"en": "Peeved", "tr": "Gıcık olmuş", "hint": "Küçük bir şeye çok sinirlenmek. 😒"},
+        {"en": "Quick-witted", "tr": "Hazırcevap", "hint": "Zekice cevapları anında yapıştıran. ⚡"},
+        {"en": "Relentless", "tr": "Aman vermez", "hint": "Dur durak bilmeyen, sürekli ve sert. 👊"},
+        {"en": "Sarcastic", "tr": "İğneleyici", "hint": "Alaycı, tersini söyleyerek dalga geçen. 😏"},
+        {"en": "Tedious", "tr": "Bıktırıcı", "hint": "Çok yavaş ve sıkıcı ilerleyen süreç. ⏳"},
+        {"en": "Unwind", "tr": "Kafa dağıtmak", "hint": "Günün stresinden kurtulup rahatlamak. 🧘‍♂️"},
+        {"en": "Vibrant", "tr": "Canlı", "hint": "Enerji dolu, renkli ve hareketli. 🌈"},
+        {"en": "Witty", "tr": "Nüktedan", "hint": "Zekice espri yapan. 🎭"},
+        {"en": "Yield", "tr": "Teslim olmak / Yol vermek", "hint": "Tartışmada geri adım atmak veya trafikte yol vermek. 🛑"},
+        {"en": "Adept", "tr": "Becerikli", "hint": "Bir konuda çok usta ve deneyimli olan. 🏆"},
+        {"en": "Blunt", "tr": "Patavatsız", "hint": "Lafı dolandırmadan, bazen kırıcı derecede dürüst konuşan. 🔪"},
+        {"en": "Clutter", "tr": "Dağınıklık", "hint": "Gereksiz eşyaların yarattığı kalabalık. 📦"},
+        {"en": "Dread", "tr": "Korkuyla beklemek", "hint": "Gelecek bir olaydan büyük endişe duymak. 😨"},
+        {"en": "Endorse", "tr": "Onaylamak", "hint": "Bir fikri veya kişiyi açıkça desteklemek. ✅"},
+        {"en": "Fickle", "tr": "Maymun iştahlı", "hint": "Kararsız, sürekli fikir değiştiren. 🐒"},
+        {"en": "Genuine", "tr": "Hakiki", "hint": "Sahte olmayan, içten ve dürüst. 💎"},
+        {"en": "Hassle", "tr": "Zahmet", "hint": "Uğraştırıcı ve sinir bozucu küçük işler. 😤"},
+        {"en": "Impromptu", "tr": "Hazırlıksız", "hint": "Aniden, plan yapmadan yapılan (Örn: Konuşma). 🎤"},
+        {"en": "Jovial", "tr": "Şen şakrak", "hint": "Sürekli gülen, neşeli ve dost canlısı. 😄"},
+        {"en": "Knack", "tr": "Püf noktası / Yetenek", "hint": "Bir şeyi yapmanın özel yolu veya doğuştan gelen beceri. 🔑"},
+        {"en": "Lenient", "tr": "Yumuşak yüzlü", "hint": "Kurallar konusunda esnek ve hoşgörülü. 😇"},
+        {"en": "Mediocre", "tr": "Vasat", "hint": "Ne iyi ne kötü, sıradan ve etkisiz. 😐"},
+        {"en": "Nimble", "tr": "Çevik", "hint": "Hem fiziksel hem de zihinsel olarak çok hızlı. 🏃‍♂️"},
+        {"en": "Obsess", "tr": "Kafayı takmak", "hint": "Bir şeyi saplantı haline getirmek. 🧠"},
+        {"en": "Peculiar", "tr": "Nev-i şahsına münhasır", "hint": "Kendine has bir tuhaflığı olan. 🦄"},
+        {"en": "Rant", "tr": "Ağzına geleni söylemek", "hint": "Bir konuda uzun uzun ve öfkeyle şikayet etmek. 🗣️"},
+        {"en": "Sluggish", "tr": "Ağır kanlı", "hint": "Yavaş hareket eden, uyuşuk. 🐌"},
+        {"en": "Trivial", "tr": "İncir çekirdeğini doldurmaz", "hint": "Çok küçük ve önemsiz ayrıntı. 🤏"},
+        {"en": "Urge", "tr": "Dürtü", "hint": "İçten gelen güçlü bir yapma isteği. ⚡"},
+        {"en": "Vulnerable", "tr": "Savunmasız", "hint": "Duygusal veya fiziksel olarak incinmeye açık. 🛡️"},
+        {"en": "Whimsical", "tr": "Sürprizlerle dolu", "hint": "Hayalperest, çocuksu ve oyuncu. 🎈"},
+        {"en": "Yearn", "tr": "Burnunda tütmek", "hint": "Bir şeyi veya birini çok özlemek. 🥺"},
+        {"en": "Zest", "tr": "Yaşam enerjisi", "hint": "Hayata karşı duyulan büyük coşku. 🌟"},
+        {"en": "Apathy", "tr": "İlgisizlik", "hint": "Hiçbir şeye karşı heyecan veya ilgi duymama. 😑"},
+        {"en": "Beverage", "tr": "İçecek", "hint": "Su dışındaki her türlü içecek için resmi terim. ☕"},
+        {"en": "Cringe", "tr": "Başkası adına utanmak", "hint": "Utanç verici bir durum karşısında yüzünü ekşitmek. 😬"},
+        {"en": "Dazzle", "tr": "Göz kamaştırmak", "hint": "Güzelliği veya zekasıyla birini etkilemek. ✨"},
+        {"en": "Envisage", "tr": "Öngörmek", "hint": "Gelecekteki bir durumu zihninde canlandırmak. 🔮"},
+        {"en": "Flaw", "tr": "Kusur", "hint": "Bir şeyin mükemmelliğini bozan küçük hata. 💎"},
+        {"en": "Glitch", "tr": "Küçük arıza", "hint": "Sistemde veya planlardaki anlık aksaklık. 👾"},
+        {"en": "Hindsight", "tr": "Sonradan fark etme", "hint": "Bir olay bittikten sonra ne yapılması gerektiğini anlamak. 🧠"},
+        {"en": "Incentive", "tr": "Teşvik", "hint": "Birini bir şeye ikna etmek için sunulan ödül. 🎁"},
+        {"en": "Jeopardy", "tr": "Tehlike", "hint": "Riskli bir durumun içinde olmak. ⚠️"},
+        {"en": "Kindle", "tr": "Alevlendirmek", "hint": "Bir duyguyu veya ateşi başlatmak. 🔥"},
+        {"en": "Lurk", "tr": "Pusuda beklemek", "hint": "Görünmeden izlemek (Sosyal medyada çok kullanılır). 👀"},
+        {"en": "Mingle", "tr": "Kaynaşmak", "hint": "Bir partide veya etkinlikte insanlarla sohbet etmek. 🥂"},
+        {"en": "Nudge", "tr": "Hafifçe dürtmek", "hint": "Birini nazikçe bir şeye yönlendirmek. 👉"},
+        {"en": "Overwhelmed", "tr": "Yük altında ezilmiş", "hint": "Duyguların veya işlerin çok fazla gelmesi. 🌊"},
+        {"en": "Perks", "tr": "Yan haklar / Avantajlar", "hint": "Bir işin maaş dışındaki güzel getirileri. 🎟️"},
+        {"en": "Reluctant", "tr": "Gönülsüz", "hint": "Bir şeyi yapmaya pek istekli olmamak. 😒"},
+        {"en": "Soothe", "tr": "Yatıştırmak", "hint": "Acıyı veya öfkeyi dindirmek, sakinleştirmek. 🧘"},
+        {"en": "Tackle", "tr": "Ele almak / Çözmek", "hint": "Zor bir sorunun üzerine gidip halletmeye çalışmak. 💪"},
+        {"en": "Utter", "tr": "Tamamen", "hint": "Bir durumu vurgulamak için kullanılır (Örn: Utter nonsense). 🗣️"},
+        {"en": "Venture", "tr": "Girişim", "hint": "Riskli ama heyecan verici yeni bir adım. 🚀"},
+        {"en": "Wary", "tr": "Temkinli", "hint": "Birine veya bir şeye güvenmeden önce izlemek. 🧐"},
+        {"en": "Yield", "tr": "Verim", "hint": "Yapılan işten alınan sonuç veya kazanç. 📈"},
+        {"en": "Zenith", "tr": "Doruk noktası", "hint": "Başarının ulaştığı en üst seviye. 🏔️"}
     ]
-
-# --- STATE YÖNETİMİ ---
-if 'current_word' not in st.session_state:
-    st.session_state.current_word = random.choice(st.session_state.words)
-if 'score' not in st.session_state:
-    st.session_state.score = 0
-if 'show_hint' not in st.session_state:
-    st.session_state.show_hint = False
-if 'answered_correctly' not in st.session_state:
-    st.session_state.answered_correctly = False
-
-# --- FONKSİYONLAR ---
-def next_word():
-    st.session_state.current_word = random.choice(st.session_state.words)
-    st.session_state.show_hint = False
-    st.session_state.answered_correctly = False
-    # Formu sıfırlamak için rerun tetikliyoruz
-    st.rerun()
-
-# --- ARAYÜZ ---
-st.title("🎓 C2 Level Vocabulary Master")
-st.write(f"Hoş geldin Utku! Günlük akıcılık için kelime avına başlayalım. ✨")
-
-# Skor ve Mod
-col1, col2 = st.columns([1, 1])
-with col1:
-    st.metric("Skorun", st.session_state.score)
-with col2:
-    mode = st.selectbox("Mod Seçin", ["EN -> TR", "TR -> EN"], key="mode_selection")
-
-st.divider()
-
-# Kelime Bilgileri
-word = st.session_state.current_word
-target_question = word['en'] if mode == "EN -> TR" else word['tr']
-correct_answer = word['tr'] if mode == "EN -> TR" else word['en']
-
-st.markdown(f"<h1 style='text-align: center; color: #4A90E2;'>{target_question}</h1>", unsafe_allow_html=True)
-
-# İpucu Bölümü
-if st.session_state.show_hint:
-    st.info(f"💡 **İpucu:** {word['hint']}")
-else:
-    if st.button("Bir ipucu verir misin?"):
-        st.session_state.show_hint = True
-        st.rerun()
-
-# Cevap Formu
-with st.form(key='quiz_form', clear_on_submit=True):
-    user_ans = st.text_input("Cevabın nedir?").strip()
-    submit_button = st.form_submit_button(label='Kontrol Et')
-
-if submit_button:
-    if user_ans.lower() == correct_answer.lower():
-        st.success(f"Harikasın! 🎉 Doğru cevap: **{correct_answer}**")
-        st.session_state.score += 10
-        st.session_state.answered_correctly = True
-        st.balloons()
-    else:
-        st.error(f"Üzgünüm, doğru cevap **{correct_answer}** olmalıydı. 🤔")
-
-# Yeni Kelime Butonu (Her zaman görünür ve formun dışında)
-if st.button("Yeni Kelime Getir 🔄"):
-    next_word()
