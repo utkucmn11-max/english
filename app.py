@@ -14,7 +14,6 @@ if 'words' not in st.session_state:
         {"en": "Serendipity", "tr": "Mutlu tesadüf", "hint": "Beklenmedik anda gelen güzel şans."},
         {"en": "Pragmatic", "tr": "Gerçekçi", "hint": "Teoriden çok uygulamaya ve faydaya odaklanan."},
         {"en": "Ambiguous", "tr": "Belirsiz", "hint": "Net olmayan, iki farklı yöne çekilebilen."},
-        {"en": "Resilient", "tr": "Dayanıklı", "hint": "Zorluklar karşısında çabuk toparlanan."}
         {"en": "Ubiquitous", "tr": "Her yerde bulunan", "hint": "Gözünüzü çevirdiğiniz her yerde olan, yaygın."},
         {"en": "Impeccable", "tr": "Kusursuz", "hint": "Hatasız, 'perfect' kelimesinin üst seviyesi."},
         {"en": "Eloquent", "tr": "Hitabeti güçlü", "hint": "Güzel ve etkileyici konuşan kişiler için kullanılır."},
