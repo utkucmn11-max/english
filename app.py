@@ -4,7 +4,15 @@ import json
 import os
 
 # Sayfa Ayarları
-st.set_page_config(page_title="Kelime Kartları", page_icon="📝", layout="centered")
+st.set_page_config(
+    page_title="Utku'nun Kelime Rehberi | Ücretsiz İngilizce Öğren",
+    page_icon="📝",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        'About': "# Utku'nun Kelime Rehberi\nGünlük hayatta en çok kullanılan 1000 kelimeyi öğrenin!"
+    }
+)
 
 # --- KELİME YÜKLEME SİSTEMİ ---
 def load_words():
