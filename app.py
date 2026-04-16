@@ -4,21 +4,26 @@ import json
 import os
 
 # Sayfa Ayarları
-st.set_page_config(page_title="Utku'nun Kelime Rehberi", page_icon="📝", layout="centered")
+st.set_page_config(page_title="Kelime Kartları", page_icon="📝", layout="centered")
 
 # --- KELİME YÜKLEME SİSTEMİ ---
 def load_words():
     if os.path.exists('words.json'):
-        with open('words.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
+        try:
+            with open('words.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if data and isinstance(data, list):
+                    return data
+        except Exception as e:
+            st.error(f"JSON Okuma Hatası: {e}")
+    # Dosya yoksa veya hatalıysa boş kalmasın
     return [["Always", "Her zaman", "Hiç aksatmadan yapılanlar. ⏰"]]
 
-# Kelimeleri sadece bir kez yükle ve karıştır
+# Kelimeleri yükle ve karıştır
 if 'word_pool' not in st.session_state:
-    full_pool = load_words()
-    random.shuffle(full_pool) # İlk başta karıştırıyoruz 🃏
-    st.session_state.word_pool = full_pool
-    st.session_state.current_index = 0 # Kaçıncı kelimede olduğumuzu tutar
+    st.session_state.word_pool = load_words()
+    random.shuffle(st.session_state.word_pool)
+    st.session_state.current_index = 0
 
 # --- STATE YÖNETİMİ ---
 if 'score' not in st.session_state:
@@ -29,38 +34,37 @@ if 'is_correct' not in st.session_state:
     st.session_state.is_correct = None
 
 def next_word():
-    # Bir sonraki kelimeye geç
     st.session_state.current_index += 1
-    
-    # Eğer listedeki tüm kelimeler bittiyse, listeyi tekrar karıştır ve başa dön
+    # Liste bittiyse başa dön ve karıştır
     if st.session_state.current_index >= len(st.session_state.word_pool):
         random.shuffle(st.session_state.word_pool)
         st.session_state.current_index = 0
-        st.toast("Tüm kelimeler bitti, liste yeniden karıştırıldı! 🔄", icon="🎯")
-
+        st.toast("Liste bitti, yeniden karıştırıldı! 🔄")
+    
     st.session_state.answered = False
     st.session_state.is_correct = None
     st.rerun()
 
 # --- ARAYÜZ ---
-st.title("📖 Kelime Öğrenme Platformu")
+st.title("📖 Kelime Rehberi")
 
-# Kelime sayısını gösteren küçük bir bilgi
-total_w = len(st.session_state.word_pool)
-current_w = st.session_state.current_index + 1
-st.caption(f"Kelime: {current_w} / {total_w} (Tekrar etmeden ilerliyor 🚀)")
+# Hata Veren Kritik Bölge (Düzeltildi)
+try:
+    current = st.session_state.word_pool[st.session_state.current_index]
+except IndexError:
+    st.session_state.current_index = 0
+    current = st.session_state.word_pool[0]
 
-st.metric("Skorun", st.session_state.score)
+st.metric("Skor", st.session_state.score)
 mode = st.selectbox("Mod Seçin", ["EN -> TR", "TR -> EN"])
 
 st.divider()
 
-# Mevcut Kelimeyi İndekse Göre Al
-current = st.session_state.word_pool[st.session_state.current_index]
+# Kelime Bilgileri (JSON Yapısına Uygun)
 q_idx, a_idx = (0, 1) if mode == "EN -> TR" else (1, 0)
 target_question = current[q_idx]
 correct_answer = current[a_idx]
-hint_text = current[2]
+hint_text = current[2] if len(current) > 2 else "İpucu bulunamadı."
 
 st.markdown(f"<h1 style='text-align: center; color: #4A90E2;'>{target_question}</h1>", unsafe_allow_html=True)
 st.info(f"💡 **İpucu:** {hint_text}")
@@ -73,6 +77,7 @@ with st.form(key='quiz_form', clear_on_submit=True):
 if submit_button:
     if user_ans:
         st.session_state.answered = True
+        # Küçük harf ve esnek kontrol
         if user_ans in correct_answer.lower() or correct_answer.lower() in user_ans:
             st.session_state.is_correct = True
             st.session_state.score += 10
@@ -83,13 +88,10 @@ if submit_button:
 # Sonuç Ekranı
 if st.session_state.answered:
     if st.session_state.is_correct:
-        st.success(f"Tebrikler Utku! Doğru cevap: **{correct_answer}** 🎉")
+        st.success(f"Tebrikler! Doğru cevap: **{correct_answer}** 🎉")
         st.balloons()
     else:
         st.error(f"Yanlış! Doğru cevap: **{correct_answer.upper()}** ❌")
-        st.warning("Kutu kilitlendi. Hazır olduğunda sıradakine geç.")
     
-    if st.button("Sıradaki Kelimeye Geç ➡️"):
+    if st.button("Sıradaki Kelime ➡️"):
         next_word()
-
-st.divider()
