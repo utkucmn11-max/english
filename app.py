@@ -21,14 +21,12 @@ def load_words():
         except Exception as e:
             st.error(f"JSON Okuma Hatası: {e} ⚠️")
     
-    # Varsayılan Kelimeler (Seviye bilgisi eklendi)
     return [
         ["Always", "Her zaman", "Hiç aksatmadan yapılanlar. ⏰", "A1"],
         ["Incredible", "İnanılmaz", "Büyüleyici durumlar için.", "B1"],
         ["Sovereignty", "Egemenlik", "Bağımsızlık sembolü.", "C1"]
     ]
 
-# Veriyi bir kez yükle
 all_words = load_words()
 
 # --- STATE YÖNETİMİ ---
@@ -40,29 +38,44 @@ if 'is_correct' not in st.session_state:
     st.session_state.is_correct = None
 if 'current_index' not in st.session_state:
     st.session_state.current_index = 0
+if 'selected_level' not in st.session_state:
+    st.session_state.selected_level = "Hepsi"
 
-# --- YENİ: SEVİYE FİLTRELEME ---
-st.sidebar.title("⚙️ Ayarlar")
-levels = ["Hepsi", "A1", "A2", "B1", "B2", "C1"]
-selected_level = st.sidebar.selectbox("İngilizce Seviyenizi Seçin", levels)
+# --- YENİ: DÜĞME İLE SEVİYE SEÇİMİ (ANA SAYFA) ---
+st.title("📖 Kelime Rehberi")
+st.markdown("### 🎯 Bir Seviye Seçin")
 
-# Filtrelenmiş kelime havuzunu oluştur
-if selected_level == "Hepsi":
-    filtered_pool = all_words
-else:
-    filtered_pool = [w for w in all_words if len(w) > 3 and w[3] == selected_level]
+# Yan yana düğmeler oluştur
+levels = ["Hepsi", "A1", "A2", "B1", "B2"]
+cols = st.columns(len(levels))
 
-# Eğer seçilen seviyede kelime yoksa hata vermemesi için
-if not filtered_pool:
-    st.warning(f"{selected_level} seviyesinde henüz kelime yok! 'Hepsi' gösteriliyor. ✨")
-    filtered_pool = all_words
+for i, lvl in enumerate(levels):
+    # Aktif seviyeyi belirtmek için düğme stilini (isteğe bağlı) veya metni değiştirebilirsin
+    label = f"⭐ {lvl}" if st.session_state.selected_level == lvl else lvl
+    if cols[i].button(label, use_container_width=True):
+        st.session_state.selected_level = lvl
+        # Havuzu güncelle
+        if lvl == "Hepsi":
+            st.session_state.word_pool = all_words
+        else:
+            st.session_state.word_pool = [w for w in all_words if len(w) > 3 and w[3] == lvl]
+        
+        # Eğer boşsa varsayılana dön
+        if not st.session_state.word_pool:
+            st.warning(f"{lvl} seviyesinde kelime bulunamadı! ✨")
+            st.session_state.word_pool = all_words
+            
+        random.shuffle(st.session_state.word_pool)
+        st.session_state.current_index = 0
+        st.session_state.answered = False
+        st.rerun()
 
-# Havuz değişirse veya ilk kez açılıyorsa karıştır
-if 'last_level' not in st.session_state or st.session_state.last_level != selected_level:
-    st.session_state.word_pool = filtered_pool
+st.divider()
+
+# Kelime havuzu başlangıçta yoksa oluştur
+if 'word_pool' not in st.session_state:
+    st.session_state.word_pool = all_words
     random.shuffle(st.session_state.word_pool)
-    st.session_state.current_index = 0
-    st.session_state.last_level = selected_level
 
 def next_word():
     st.session_state.current_index += 1
@@ -75,10 +88,7 @@ def next_word():
     st.session_state.is_correct = None
     st.rerun()
 
-# --- ARAYÜZ ---
-st.title("📖 Kelime Rehberi")
-
-# Mevcut kelimeyi al
+# --- ÇALIŞMA EKRANI ---
 current = st.session_state.word_pool[st.session_state.current_index]
 
 col1, col2 = st.columns(2)
@@ -87,8 +97,6 @@ with col1:
 with col2:
     mode = st.selectbox("Çalışma Modu", ["EN -> TR", "TR -> EN"])
 
-st.divider()
-
 # Kelime Bilgileri
 q_idx, a_idx = (0, 1) if mode == "EN -> TR" else (1, 0)
 target_question = current[q_idx]
@@ -96,7 +104,7 @@ correct_answer = current[a_idx]
 hint_text = current[2] if len(current) > 2 else "İpucu yok."
 current_level = current[3] if len(current) > 3 else "Genel"
 
-st.markdown(f"<p style='text-align: center;'>Seviye: <b>{current_level}</b></p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: gray;'>Şu anki Seviye: <b>{st.session_state.selected_level}</b></p>", unsafe_allow_html=True)
 st.markdown(f"<h1 style='text-align: center; color: #4A90E2;'>{target_question}</h1>", unsafe_allow_html=True)
 st.info(f"💡 **İpucu:** {hint_text}")
 
@@ -108,6 +116,7 @@ with st.form(key='quiz_form', clear_on_submit=True):
 if submit_button:
     if user_ans:
         st.session_state.answered = True
+        # Küçük bir tolerans: Cevap içinde geçiyorsa veya tam eşleşiyorsa
         if user_ans in correct_answer.lower() or correct_answer.lower() in user_ans:
             st.session_state.is_correct = True
             st.session_state.score += 10
